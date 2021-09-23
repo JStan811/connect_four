@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class Player
-  def place_piece(piece, position, board)
-    board.update_state(piece, position)
+  def initialize(name, symbol)
+    @name = name
+    @symbol = symbol
   end
+
+  attr_reader :name, :symbol
 end

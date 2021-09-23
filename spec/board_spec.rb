@@ -2,6 +2,7 @@
 
 require_relative '../lib/board'
 
+# rubocop: disable Metrics/BlockLength
 describe Board do
   describe '#update_state' do
     subject(:board) { described_class.new }
@@ -46,7 +47,7 @@ describe Board do
     context 'when column has all empty slots' do
       it 'is not full' do
         column = 3
-        expect(board.column_full?(3)).to be false
+        expect(board.column_full?(column)).to be false
       end
     end
 
@@ -59,7 +60,7 @@ describe Board do
         state[2][3] = instance_double('piece')
         state[3][3] = instance_double('piece')
         state[4][3] = instance_double('piece')
-        expect(board.column_full?(3)).to be false
+        expect(board.column_full?(column)).to be false
       end
     end
   end
@@ -559,4 +560,27 @@ describe Board do
       end
     end
   end
+
+  describe '#tie?' do
+    # this will always be run after the win check, so we don't need to check
+    # for win
+    subject(:board) { described_class.new }
+
+    context 'when board is full' do
+      it 'is a tie' do
+        state = board.instance_variable_get(:@state)
+        allow(state).to receive(:any?).and_return(false)
+        expect(board).to be_tie
+      end
+    end
+
+    context 'when board is not full' do
+      it 'is not a tie' do
+        state = board.instance_variable_get(:@state)
+        allow(state).to receive(:any?).and_return(true)
+        expect(board).not_to be_tie
+      end
+    end
+  end
 end
+# rubocop: enable Metrics/BlockLength

@@ -10,7 +10,7 @@ class Board
     # then place piece there and stop loop
     @state.each do |row|
       if row[column].nil?
-        row[column] =  piece
+        row[column] = piece
         break
       end
     end
@@ -129,5 +129,9 @@ class Board
       break if result == true
     end
     result
+  end
+
+  def tie?
+    !(@state.any?(&:nil?))
   end
 end

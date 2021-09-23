@@ -13,6 +13,7 @@ class Game
 
   def game_loop
     display_welcome_message
+    @board.display_blank_board
     loop do
       player_turn(@player1)
       break if game_over?(@player1)
@@ -23,21 +24,21 @@ class Game
   end
 
   def player_turn(player)
-    puts "#{player.name}, your up."
+    puts "#{player.name}, you're up."
+    # @board.display_board
     player_column = finalize_player_action_loop
-    @board.update_state(player_column, Piece.new(player.symbol))
+    @board.update_state(Piece.new(player.symbol), player_column)
   end
 
   def game_over?(player)
-    game_over = false
     if @board.win?
       puts "#{player.name}, you win."
-      game_over = true
+      return true
     elsif @board.tie?
       puts 'The game ends in a tie.'
-      game_over = true
+      return true
     end
-    game_over
+    false
   end
 
   def solicit_player_action
@@ -70,6 +71,5 @@ class Game
     puts "#{@player2.name}, yours is #{@player2.symbol}."
     puts ''
     puts 'Good luck.'
-    puts ''
   end
 end

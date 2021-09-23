@@ -1,0 +1,5 @@
+- Finish board design.text and Board#display_board
+  - need to rebuild array with ' ' instead of nil. Then this needs to grab #symbol from each piece unless ' '
+  - uncomment out lib/board.rb:128
+- Clean up #valid_column?
+  - For some reason, it currently takes strings (eg 'dfadsf')

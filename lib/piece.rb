@@ -5,4 +5,6 @@ class Piece
   def initialize(symbol)
     @symbol = symbol
   end
+
+  attr_reader :symbol
 end

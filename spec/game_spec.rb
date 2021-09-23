@@ -19,39 +19,216 @@ describe Game do
     context 'when first player wins on first turn' do
       before do
         allow(game).to receive(:puts)
-        allow(game).to receive(:finalize_player_action_loop)
-        allow(board).to receive(:update_state)
+        allow(board).to receive(:display_board)
+        allow(game).to receive(:player_turn)
+        allow(game).to receive(:game_over?).and_return(true)
+      end
+
+      it 'displays welcome message once' do
+        expect(game).to receive(:display_welcome_message).once
+        game.game_loop
+      end
+
+      it 'displays board once' do
+        expect(board).to receive(:display_board).once
+        game.game_loop
+      end
+
+      it 'runs player turn once' do
+        expect(game).to receive(:player_turn).once
+        game.game_loop
+      end
+
+      it 'check if game over once' do
+        expect(game).to receive(:game_over?).once
+        game.game_loop
+      end
+    end
+
+    context 'when second player wins on first turn' do
+      before do
+        allow(game).to receive(:puts)
+        allow(board).to receive(:display_board)
+        allow(game).to receive(:player_turn)
+        allow(game).to receive(:game_over?).and_return(false, true)
+      end
+
+      it 'displays welcome message once' do
+        expect(game).to receive(:display_welcome_message).once
+        game.game_loop
+      end
+
+      it 'displays board once' do
+        expect(board).to receive(:display_board).once
+        game.game_loop
+      end
+
+      it 'runs player turn twice' do
+        expect(game).to receive(:player_turn).twice
+        game.game_loop
+      end
+
+      it 'check if game over twice' do
+        expect(game).to receive(:game_over?).twice
+        game.game_loop
+      end
+    end
+
+    context 'when second player wins on 5th turn' do
+      before do
+        allow(game).to receive(:puts)
+        allow(board).to receive(:display_board)
+        allow(game).to receive(:player_turn)
+        allow(game).to receive(:game_over?).and_return(false, false, false, false, false, false, false, false, false, true)
+      end
+
+      it 'displays welcome message once' do
+        expect(game).to receive(:display_welcome_message).once
+        game.game_loop
+      end
+
+      it 'displays board once' do
+        expect(board).to receive(:display_board).once
+        game.game_loop
+      end
+
+      it 'runs player turn 10 times' do
+        expect(game).to receive(:player_turn).exactly(10).times
+        game.game_loop
+      end
+
+      it 'check if game 10 times' do
+        expect(game).to receive(:game_over?).exactly(10).times
+        game.game_loop
+      end
+    end
+  end
+
+  describe '#player_turn' do
+    subject(:game) { described_class.new }
+    let(:board) { game.instance_variable_get(:@board) }
+    let(:player) { game.instance_variable_get(:@player1) }
+
+    before do
+      allow(game).to receive(:puts)
+      allow(board).to receive(:display_board)
+      allow(game).to receive(:finalize_player_action_loop)
+      allow(board).to receive(:update_state)
+    end
+
+    it 'displays board once' do
+      allow(board).to receive(:display_board).once
+      game.player_turn(player)
+    end
+
+    it 'runs #finalize_player_action_loop once' do
+      expect(game).to receive(:finalize_player_action_loop).once
+      game.player_turn(player)
+    end
+
+    it 'asks board to update state once' do
+      expect(board).to receive(:update_state).once
+      game.player_turn(player)
+    end
+  end
+
+  describe '#game_over?' do
+    subject(:game) { described_class.new }
+    let(:board) { game.instance_variable_get(:@board) }
+    let(:player) { game.instance_variable_get(:@player1) }
+
+    context 'when a player has won' do
+      before do
+        allow(game).to receive(:puts)
         allow(board).to receive(:win?).and_return(true)
-      end
-
-      it 'runs #finalize_player_action_loop once' do
-        expect(game).to receive(:finalize_player_action_loop).once
-        game.game_loop
-      end
-
-      it 'asks board to update state once' do
-        expect(board).to receive(:update_state).once
-        game.game_loop
       end
 
       it 'asks board for win once' do
         expect(board).to receive(:win?).once
-        game.game_loop
+        game.game_over?(player)
       end
 
-      it 'displays player 1 win message once' do
-        expect(game).to receive(:puts).with("#{player1.name}, you win.").once
-        game.game_loop
+      it 'displays player win message once' do
+        expect(game).to receive(:puts).with("#{player.name}, you win.").once
+        game.game_over?(player)
       end
 
-      it 'does not ask board for tie' do
+      it 'does not ask board if there is a tie' do
         expect(board).not_to receive(:tie?)
-        game.game_loop
+        game.game_over?(player)
       end
 
       it 'does not display game tie message' do
         expect(game).not_to receive(:puts).with('The game ends in a tie.')
-        game.game_loop
+        game.game_over?(player)
+      end
+
+      it 'is game over' do
+        expect(game).to be_game_over(player)
+      end
+    end
+
+    context 'when there is a tie' do
+      before do
+        allow(game).to receive(:puts)
+        allow(board).to receive(:win?).and_return(false)
+        allow(board).to receive(:tie?).and_return(true)
+      end
+
+      it 'asks board for win once' do
+        expect(board).to receive(:win?).once
+        game.game_over?(player)
+      end
+
+      it 'does not display player win message' do
+        expect(game).not_to receive(:puts).with("#{player.name}, you win.")
+        game.game_over?(player)
+      end
+
+      it 'asks board if there is a tie once' do
+        expect(board).to receive(:tie?).once
+        game.game_over?(player)
+      end
+
+      it 'displays game tie message once' do
+        expect(game).to receive(:puts).with('The game ends in a tie.').once
+        game.game_over?(player)
+      end
+
+      it 'is game over' do
+        expect(game).to be_game_over(player)
+      end
+    end
+
+    context 'when neither a player has won nor the game is a tie' do
+      before do
+        allow(game).to receive(:puts)
+        allow(board).to receive(:win?).and_return(false)
+        allow(board).to receive(:tie?).and_return(false)
+      end
+
+      it 'asks board for win once' do
+        expect(board).to receive(:win?).once
+        game.game_over?(player)
+      end
+
+      it 'does not display player win message ' do
+        expect(game).not_to receive(:puts).with("#{player.name}, you win.")
+        game.game_over?(player)
+      end
+
+      it 'asks board if there is a tie once' do
+        expect(board).to receive(:tie?).once
+        game.game_over?(player)
+      end
+
+      it 'does not display game tie message' do
+        expect(game).not_to receive(:puts).with('The game ends in a tie.')
+        game.game_over?(player)
+      end
+
+      it 'is not game over' do
+        expect(game).not_to be_game_over(player)
       end
     end
   end

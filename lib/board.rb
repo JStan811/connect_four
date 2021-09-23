@@ -16,6 +16,28 @@ class Board
     end
   end
 
+  # def display_board
+  #   puts " _ _ _ _ _ _ _
+  #   |#{@state[5][0]}|#{@state[5][1]}|#{@state[5][2]}|#{@state[5][3]}|#{@state[5][4]}|#{@state[5][5]}|#{@state[5][6]}|
+  #   |#{@state[4][0]}|#{@state[4][1]}|#{@state[4][2]}|#{@state[4][3]}|#{@state[4][4]}|#{@state[4][5]}|#{@state[4][6]}|
+  #   |#{@state[3][0]}|#{@state[3][1]}|#{@state[3][2]}|#{@state[3][3]}|#{@state[3][4]}|#{@state[3][5]}|#{@state[3][6]}|
+  #   |#{@state[2][0]}|#{@state[2][1]}|#{@state[2][2]}|#{@state[2][3]}|#{@state[2][4]}|#{@state[2][5]}|#{@state[2][6]}|
+  #   |#{@state[1][0]}|#{@state[1][1]}|#{@state[1][2]}|#{@state[1][3]}|#{@state[1][4]}|#{@state[1][5]}|#{@state[1][6]}|
+  #   |#{@state[0][0]}|#{@state[0][1]}|#{@state[0][2]}|#{@state[0][3]}|#{@state[0][4]}|#{@state[0][5]}|#{@state[0][6]}|
+  #    _ _ _ _ _ _ _"
+  # end
+
+  def display_blank_board
+    puts "     _ _ _ _ _ _ _
+    |_|_|_|_|_|_|_|
+    |_|_|_|_|_|_|_|
+    |_|_|_|_|_|_|_|
+    |_|_|_|_|_|_|_|
+    |_|_|_|_|_|_|_|
+    |_|_|_|_|_|_|_|
+     0 1 2 3 4 5 6"
+  end
+
   def column_full?(column)
     result = true
     @state.each do |row|
@@ -132,6 +154,6 @@ class Board
   end
 
   def tie?
-    !(@state.any?(&:nil?))
+    @state.flatten.none? nil
   end
 end

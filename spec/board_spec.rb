@@ -27,6 +27,14 @@ describe Board do
     end
   end
 
+  describe '#display_board' do
+    subject(:board) { described_class.new }
+    it 'puts board display once' do
+      expect(board).to receive(:puts).once
+      board.display_board
+    end
+  end
+
   describe '#column_full?' do
     subject(:board) { described_class.new }
 
@@ -40,7 +48,7 @@ describe Board do
         state[3][3] = instance_double('piece')
         state[4][3] = instance_double('piece')
         state[5][3] = instance_double('piece')
-        expect(board.column_full?(3)).to be true
+        expect(board.column_full?(column)).to be true
       end
     end
 
